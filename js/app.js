@@ -11,8 +11,19 @@
 		model: Item
 	});
 
+	var ItemView = Backbone.View.extend({
+		tagName: 'li',
+		initialize: function(){
+			_.bindAll(this, 'render');
+		},
+		render: function(){
+			$(this.el).html('<span>' + this.model.get('part1') + ' ' + this.model.get('part2') + '</span>');
+			return this; // for chainable calls
+		}
+	});
+
 	var ListView = Backbone.View.extend({
-		el: $('body'), // attaches 'this.el' to an existing element
+		el: 'body', // attaches 'this.el' to an existing element
 
 		events: {
 			'click button#add': 'addItem'
@@ -33,7 +44,7 @@
 
 			$(this.el).append("<button id='add'>Add list item</button>");
 			$(this.el).append("<ul></ul>");
-			_(this.collection.models).each(function(item){ // in case collection is empty
+			_(this.collection.models).each(function(item){ // in case collection is not empty
 				self.appendItem(item);
 			}, this);
 		},
@@ -48,7 +59,10 @@
 		},
 
 		appendItem: function(item){
-			$('ul', this.el).append("<li>" + item.get('part1') + " " + item.get('part2') + "</li>");
+			var itemView = new ItemView({
+				model: item
+			});
+			$('ul', this.el).append(itemView.render().el);
 		}
 	});
 
